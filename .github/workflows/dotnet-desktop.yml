@@ -1,8 +1,12 @@
 name: .NET Framework Desktop
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'fork-main'
 
 jobs:
   build:
@@ -11,6 +15,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch }}
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
@@ -24,15 +30,9 @@ jobs:
     - name: Build solution
       run: msbuild ISBoxerEVELauncher.sln /p:Configuration=Release /p:Platform="Any CPU"
 
-    - name: Package release artifacts
-      run: Compress-Archive -Path bin/Release/* -DestinationPath ISBoxerEVELauncher-Release.zip
-
-    - name: Upload release asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./ISBoxerEVELauncher-Release.zip
-        asset_name: ISBoxerEVELauncher-Release.zip
-        asset_content_type: application/zip
+        name: ISBoxerEVELauncher-Release
+        path: bin/Release/
+        if-no-files-found: error
