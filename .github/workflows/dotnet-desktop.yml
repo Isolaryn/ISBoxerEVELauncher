@@ -1,0 +1,32 @@
+name: .NET Framework Desktop
+
+on:
+  push:
+    branches: [ "fork-main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore NuGet packages
+      run: nuget restore ISBoxerEVELauncher.sln
+
+    - name: Build solution
+      run: msbuild ISBoxerEVELauncher.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ISBoxerEVELauncher-Release
+        path: bin/Release/
+        if-no-files-found: error
