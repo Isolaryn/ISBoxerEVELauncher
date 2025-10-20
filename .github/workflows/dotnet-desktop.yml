@@ -18,6 +18,25 @@ jobs:
       with:
         ref: ${{ github.event.inputs.branch }}
 
+    - name: Get commit info
+      id: commit_info
+      run: |
+        echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+
+    - name: Create build info file
+      run: |
+        @"
+        Build Information
+        =================
+        Branch: ${{ github.event.inputs.branch }}
+        Commit: ${{ steps.commit_info.outputs.sha }}
+        Short Commit: ${{ steps.commit_info.outputs.short_sha }}
+        Built: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss UTC")
+        Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        "@ | Out-File -FilePath build-info.txt -Encoding utf8
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
@@ -30,9 +49,12 @@ jobs:
     - name: Build solution
       run: msbuild ISBoxerEVELauncher.sln /p:Configuration=Release /p:Platform="Any CPU"
 
+    - name: Copy build info to output
+      run: Copy-Item build-info.txt bin/Release/
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ISBoxerEVELauncher-Release
+        name: ISBoxerEVELauncher-${{ steps.commit_info.outputs.short_sha }}
         path: bin/Release/
         if-no-files-found: error
