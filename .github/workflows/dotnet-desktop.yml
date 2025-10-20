@@ -21,13 +21,15 @@ jobs:
     - name: Get commit info
       id: commit_info
       run: |
-        echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-        echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        echo "branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+        $sha = git rev-parse HEAD
+        $short_sha = git rev-parse --short HEAD
+        echo "sha=$sha" >> $env:GITHUB_OUTPUT
+        echo "short_sha=$short_sha" >> $env:GITHUB_OUTPUT
+        echo "branch=${{ github.event.inputs.branch }}" >> $env:GITHUB_OUTPUT
 
     - name: Create build info file
       run: |
-        @"
+        $buildInfo = @"
         Build Information
         =================
         Branch: ${{ github.event.inputs.branch }}
@@ -35,7 +37,17 @@ jobs:
         Short Commit: ${{ steps.commit_info.outputs.short_sha }}
         Built: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss UTC")
         Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        "@ | Out-File -FilePath build-info.txt -Encoding utf8
+        "@
+        $buildInfo | Out-File -FilePath build-info.txt -Encoding utf8
+
+        # Also output to workflow summary
+        @"
+        ## Build Information
+        - **Branch:** ${{ github.event.inputs.branch }}
+        - **Commit:** ``${{ steps.commit_info.outputs.sha }}``
+        - **Short Commit:** ``${{ steps.commit_info.outputs.short_sha }}``
+        - **Built:** $(Get-Date -Format "yyyy-MM-dd HH:mm:ss UTC")
+        "@ >> $env:GITHUB_STEP_SUMMARY
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
