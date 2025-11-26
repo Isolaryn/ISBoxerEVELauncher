@@ -332,6 +332,7 @@
     <Compile Include="Enums\RelatedExecutable.cs" />
     <Compile Include="Enums\WebRequestType.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
+    <Compile Include="Extensions\CookieContainerExtension.cs" />
     <Compile Include="Games\EVE\ProfileManager.cs" />
     <Compile Include="Games\EVE\Profiles.cs" />
     <Compile Include="Interface\ILauncher.cs" />

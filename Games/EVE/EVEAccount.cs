@@ -125,7 +125,7 @@ namespace ISBoxerEVELauncher.Games.EVE
         /// The EVE login process requires cookies; this will ensure we maintain the same cookies for the account
         /// </summary>
         [XmlIgnore]
-        CookieContainer Cookies
+        public CookieContainer Cookies
         {
             get
             {
@@ -227,23 +227,6 @@ namespace ISBoxerEVELauncher.Games.EVE
                 ISBoxerEVELauncher.Web.CookieStorage.SetCookies(this, value);
             }
         }
-
-        /// <summary>
-        /// WebView2 cookie storage (JSON format) - separate from HttpWebRequest cookies
-        /// </summary>
-        [XmlIgnore]
-        public string WebView2CookieStorage
-        {
-            get
-            {
-                return ISBoxerEVELauncher.Web.CookieStorage.GetWebViewCookies(this);
-            }
-            set
-            {
-                ISBoxerEVELauncher.Web.CookieStorage.SetWebViewCookies(this, value);
-            }
-        }
-
 
         #region Password
         System.Security.SecureString _SecurePassword;
@@ -1448,7 +1431,6 @@ namespace ISBoxerEVELauncher.Games.EVE
             this.EncryptedCharacterNameIV = null;
 
             ISBoxerEVELauncher.Web.CookieStorage.DeleteCookies(this);
-            ISBoxerEVELauncher.Web.CookieStorage.DeleteWebViewCookies(this);
             this.Username = null;
             this.Cookies = null;
             //this.NewCookieStorage = null;

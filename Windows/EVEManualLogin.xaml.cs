@@ -93,15 +93,18 @@ namespace ISBoxerEVELauncher.Windows
                     return;
                 }
 
+                var userDataFolder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "ISBoxerEVELauncher",
+                    "WebViews",
+                    _account.Username);
+                var userDataFolderExists = Directory.Exists(userDataFolder);
+
                 // We set this into userdata folder as Innerspace folder is write protected
                 WebView2.CreationProperties = new CoreWebView2CreationProperties()
                 {
                     ProfileName = _account.Username,
-                    UserDataFolder = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "ISBoxerEVELauncher",
-                        "WebViews",
-                        _account.Username)
+                    UserDataFolder = userDataFolder,
                 };
                 
                 await WebView2.EnsureCoreWebView2Async(null);
@@ -253,25 +256,20 @@ namespace ISBoxerEVELauncher.Windows
 
         private async Task LoadCookiesAsync()
         {
-            if (string.IsNullOrEmpty(_account.WebView2CookieStorage))
-                return;
-
             try
             {
                 // Decode from base64
-                byte[] data = Convert.FromBase64String(_account.WebView2CookieStorage);
-                string json = System.Text.Encoding.UTF8.GetString(data);
-
-                var cookies = JsonConvert.DeserializeObject<List<CookieData>>(json);
-                if (cookies == null)
+                var cookies = _account?.Cookies;
+                if (cookies == null || cookies.Count == 0)
                     return;
 
                 var cookieManager = WebView2.CoreWebView2.CookieManager;
-                foreach (var cookieData in cookies)
+                foreach (var cookieData in cookies.GetAllCookies())
                 {
                     var cookie = cookieManager.CreateCookie(cookieData.Name, cookieData.Value, cookieData.Domain, cookieData.Path);
-                    cookie.IsHttpOnly = cookieData.IsHttpOnly;
-                    cookie.IsSecure = cookieData.IsSecure;
+
+                    cookie.IsHttpOnly = cookieData.HttpOnly;
+                    cookie.IsSecure = cookieData.Secure;
                     cookie.Expires = cookieData.Expires;
 
                     cookieManager.AddOrUpdateCookie(cookie);
@@ -294,21 +292,36 @@ namespace ISBoxerEVELauncher.Windows
                 if (cookies == null || cookies.Count == 0)
                     return;
 
-                var cookieDataList = cookies.Select(c => new CookieData
-                {
-                    Name = c.Name,
-                    Value = c.Value,
-                    Domain = c.Domain,
-                    Path = c.Path,
-                    IsHttpOnly = c.IsHttpOnly,
-                    IsSecure = c.IsSecure,
-                    Expires = c.Expires,
-                }).ToList();
+                // Create a new CookieContainer and populate it with WebView2 cookies
+                var cookieContainer = new System.Net.CookieContainer();
 
-                // Serialize to JSON then encode as base64
-                string json = JsonConvert.SerializeObject(cookieDataList);
-                byte[] data = System.Text.Encoding.UTF8.GetBytes(json);
-                _account.WebView2CookieStorage = Convert.ToBase64String(data);
+                foreach (var webView2Cookie in cookies)
+                {
+                    try
+                    {
+                        // Create System.Net.Cookie from WebView2 cookie
+                        var cookie = new System.Net.Cookie(
+                            webView2Cookie.Name,
+                            webView2Cookie.Value,
+                            webView2Cookie.Path,
+                            webView2Cookie.Domain);
+
+                        cookie.HttpOnly = webView2Cookie.IsHttpOnly;
+                        cookie.Secure = webView2Cookie.IsSecure;
+                        cookie.Expires = webView2Cookie.Expires;
+
+                        // Add to container
+                        cookieContainer.Add(cookie);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Info($"Failed to add cookie {webView2Cookie.Name}: {ex.Message}");
+                    }
+                }
+
+                // Save the cookie container to the account
+                _account.Cookies = cookieContainer;
+                _account.UpdateCookieStorage();
             }
             catch (Exception ex)
             {
