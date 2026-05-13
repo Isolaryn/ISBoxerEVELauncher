@@ -38,12 +38,22 @@
                 <DockPanel DockPanel.Dock="Bottom" VerticalAlignment="Stretch">
                     <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="15,0,0,0" TextWrapping="Wrap" FontWeight="Bold" Text="Known EVE Accounts..." VerticalAlignment="Top"/>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="5" VerticalAlignment="Stretch">
-                        <ListBox Name="listAccounts" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="362" ItemsSource="{Binding ElementName=mainWindow, Path=Accounts}" SelectionMode="Multiple">
+                        <ListBox Name="listAccounts" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="362" ItemsSource="{Binding ElementName=mainWindow, Path=Accounts}" SelectionMode="Multiple" ContextMenuOpening="listAccounts_ContextMenuOpening">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Set Password..." Click="menuSetPassword_Click" />
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Path=Username}" />
-                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="18" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" FontFamily="Segoe MDL2 Assets" Text="{Binding Credential.Glyph}" Foreground="{Binding Credential.Brush}" ToolTip="{Binding Credential.Tooltip}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Path=Username}" Margin="4,0,0,0" />
+                                    </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

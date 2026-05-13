@@ -42,20 +42,43 @@ namespace ISBoxerEVELauncher.Games.EVE
         [XmlIgnore]
         private string code;
 
-        public string Profile
-        {
-            get; set;
-        }
-
-
         public EVEAccount()
         {
             state = Guid.NewGuid();
             challengeCodeSource = Guid.NewGuid();
             challengeCode = Encoding.UTF8.GetBytes(challengeCodeSource.ToString().Replace("-", ""));
             challengeHash = Base64UrlEncoder.Encode(ISBoxerEVELauncher.Security.SHA256.GenerateHash(Base64UrlEncoder.Encode(challengeCode)));
-            Profile = "Default";
         }
+
+        public class CredentialBadge
+        {
+            public string Glyph { get; set; }
+            public System.Windows.Media.Brush Brush { get; set; }
+            public string Tooltip { get; set; }
+        }
+
+        private void OnCredentialChanged()
+        {
+            OnPropertyChanged("Credential");
+        }
+
+        [XmlIgnore]
+        public CredentialBadge Credential
+        {
+            get
+            {
+                bool hasPassword = !string.IsNullOrEmpty(EncryptedPassword);
+                bool hasToken = !string.IsNullOrEmpty(EncryptedTranquilityRefreshToken);
+                if (hasPassword && hasToken)
+                    return new CredentialBadge { Glyph = "", Brush = System.Windows.Media.Brushes.ForestGreen, Tooltip = "Password and refresh token stored" };
+                if (hasPassword)
+                    return new CredentialBadge { Glyph = "", Brush = System.Windows.Media.Brushes.Goldenrod, Tooltip = "Password stored" };
+                if (hasToken)
+                    return new CredentialBadge { Glyph = "", Brush = System.Windows.Media.Brushes.DodgerBlue, Tooltip = "Refresh token stored" };
+                return new CredentialBadge { Glyph = string.Empty, Brush = System.Windows.Media.Brushes.Transparent, Tooltip = "No credentials stored" };
+            }
+        }
+
 
 
 
@@ -281,6 +304,7 @@ namespace ISBoxerEVELauncher.Games.EVE
             {
                 _EncryptedPassword = value;
                 OnPropertyChanged("EncryptedPassword");
+                OnCredentialChanged();
             }
         }
 
@@ -693,6 +717,7 @@ namespace ISBoxerEVELauncher.Games.EVE
             {
                 _encryptedTranquilityRefreshToken = value;
                 OnPropertyChanged("EncryptedTranquilityRefreshToken");
+                OnCredentialChanged();
             }
         }
         

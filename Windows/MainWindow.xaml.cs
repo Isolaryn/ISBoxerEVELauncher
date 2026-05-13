@@ -586,6 +586,41 @@ namespace ISBoxerEVELauncher.Windows
 
         }
 
+        private EVEAccount _contextMenuTargetAccount;
+
+        private void listAccounts_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var element = e.OriginalSource as DependencyObject;
+            ListBoxItem container = null;
+            while (element != null && element != listAccounts)
+            {
+                container = element as ListBoxItem;
+                if (container != null) break;
+                element = System.Windows.Media.VisualTreeHelper.GetParent(element)
+                         ?? System.Windows.LogicalTreeHelper.GetParent(element);
+            }
+            if (container == null)
+            {
+                e.Handled = true;
+                _contextMenuTargetAccount = null;
+                return;
+            }
+            _contextMenuTargetAccount = container.DataContext as EVEAccount;
+        }
+
+        private void menuSetPassword_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var account = _contextMenuTargetAccount;
+            if (account == null) return;
+            var el = new EVELogin(account, true) { Owner = this };
+            el.ShowDialog();
+            if (el.DialogResult.HasValue && el.DialogResult.Value)
+            {
+                App.Settings.Store();
+            }
+        }
+
         private void buttonImportFromLauncher_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;

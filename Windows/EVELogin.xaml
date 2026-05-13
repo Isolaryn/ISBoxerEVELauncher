@@ -12,10 +12,6 @@
             <TextBlock Width="120" DockPanel.Dock="Left" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center"/>
             <PasswordBox DockPanel.Dock="Right" Name="textPassword" HorizontalAlignment="Stretch" Height="23" VerticalAlignment="Top" />
         </DockPanel>
-        <DockPanel DockPanel.Dock="Top" Margin="5,0,5,5">
-            <TextBlock Width="120" DockPanel.Dock="Left" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Profile" VerticalAlignment="Center"/>
-            <ComboBox DockPanel.Dock="Left" Name="comboProfiles" HorizontalAlignment="Stretch"  VerticalAlignment="Top"  />
-        </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" Margin="5,5,5,5">
             <Button DockPanel.Dock="Right" Name="buttonGo"  Content="Go" VerticalAlignment="Top" Width="75" Click="buttonGo_Click" IsDefault="True" />
             <Button DockPanel.Dock="Right" x:Name="buttonCancel" IsCancel="True"  Content="Cancel" HorizontalAlignment="Right" Margin="5,0,5,0" VerticalAlignment="Top" Width="75" Click="buttonCancel_Click" />
