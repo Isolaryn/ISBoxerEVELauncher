@@ -1682,7 +1682,16 @@ namespace ISBoxerEVELauncher.Games.EVE
                 return LoginResult.Success;
             }
 
-            // need SecurePassword.
+            // Try refresh token before asking for a password. If we have a working refresh token
+            // (e.g. imported from the official EVE Launcher) we should never need credentials.
+            Utils.Debug.Info($"GetAccessToken - Attempting refresh token login", LogCategory);
+            if (TryGetFromRefreshToken(sisi, out accessToken))
+            {
+                Utils.Debug.Info($"GetAccessToken - Refresh token login successful", LogCategory);
+                return LoginResult.Success;
+            }
+
+            // Refresh token unavailable or rejected; fall back to password (decrypt or prompt).
             Utils.Debug.Info($"GetAccessToken - Checking for SecurePassword", LogCategory);
             if (SecurePassword == null || SecurePassword.Length == 0)
             {
@@ -1707,10 +1716,11 @@ namespace ISBoxerEVELauncher.Games.EVE
                 }
             }
 
-            Utils.Debug.Info($"GetAccessToken - Attempting refresh token login", LogCategory);
+            // Retry refresh token after credentials/master password may have been provided above.
+            Utils.Debug.Info($"GetAccessToken - Retrying refresh token login after password step", LogCategory);
             if (TryGetFromRefreshToken(sisi, out accessToken))
             {
-                Utils.Debug.Info($"GetAccessToken - Refresh token login successful", LogCategory);
+                Utils.Debug.Info($"GetAccessToken - Refresh token login successful (post-password)", LogCategory);
                 return LoginResult.Success;
             }
 
@@ -1759,12 +1769,12 @@ namespace ISBoxerEVELauncher.Games.EVE
             }
 
             Utils.Debug.Info($"GetAccessToken - Got verification token, creating login POST request", LogCategory);
-            var req = RequestResponse.CreatePostRequest(uri, sisi, true, "URL", Cookies);
+            var postUri = RequestResponse.GetLoginPostUri(sisi, state.ToString(), challengeHash);
+            var req = RequestResponse.CreatePostRequest(postUri, sisi, true, "URL", Cookies);
 
             using (SecureBytesWrapper body = new SecureBytesWrapper())
             {
-                byte[] body1 = Encoding.ASCII.GetBytes(String.Format("__RequestVerificationToken={1}&UserName={0}&Password=", Uri.EscapeDataString(Username), Uri.EscapeDataString(RequestVerificationToken)));
-                //                byte[] body1 = Encoding.ASCII.GetBytes(String.Format("UserName={0}&Password=", Uri.EscapeDataString(Username)));
+                byte[] body1 = Encoding.ASCII.GetBytes(String.Format("ClientIdentifier=eveLauncherTQ&__RequestVerificationToken={1}&UserName={0}&Password=", Uri.EscapeDataString(Username), Uri.EscapeDataString(RequestVerificationToken)));
                 using (SecureStringWrapper ssw = new SecureStringWrapper(SecurePassword, Encoding.ASCII))
                 {
                     using (SecureBytesWrapper escapedPassword = new SecureBytesWrapper())

@@ -341,6 +341,7 @@
     <Compile Include="Web\BrowserCookie.cs" />
     <Compile Include="Web\CookieStorage.cs" />
     <Compile Include="Games\EVE\EVECharacter.cs" />
+    <Compile Include="Games\EVE\EVELauncherStateReader.cs" />
     <Compile Include="Extensions\HttpWebResponseExtension.cs" />
     <Compile Include="Extensions\ProcessExtension.cs" />
     <Compile Include="Extensions\UriExtension.cs" />
@@ -375,6 +376,9 @@
     </Compile>
     <Compile Include="Windows\EVEEULAWindow.xaml.cs">
       <DependentUpon>EVEEULAWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ImportFromEVELauncherWindow.xaml.cs">
+      <DependentUpon>ImportFromEVELauncherWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="InnerSpace\InnerSpaceGameProfile.cs" />
     <Compile Include="Windows\EVELoginBrowser.cs">
@@ -435,6 +439,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\EVELogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ImportFromEVELauncherWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

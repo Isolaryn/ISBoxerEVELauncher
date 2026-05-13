@@ -586,6 +586,91 @@ namespace ISBoxerEVELauncher.Windows
 
         }
 
+        private void buttonImportFromLauncher_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            if (!App.Settings.UseRefreshTokens || !App.Settings.UseMasterKey)
+            {
+                MessageBox.Show("To import refresh tokens, enable 'Save passwords (securely)' and 'Use OAuth2 Refresh Tokens' first. Imported tokens are encrypted with your Master Password.");
+                return;
+            }
+
+            if (!EVELauncherStateReader.StateFileExists())
+            {
+                MessageBox.Show("EVE Launcher state not found. Make sure the official EVE Launcher is installed and you've signed into at least one account.");
+                return;
+            }
+
+            List<ImportCandidate> candidates;
+            try
+            {
+                candidates = EVELauncherStateReader.Read();
+            }
+            catch (System.Security.Cryptography.CryptographicException ex)
+            {
+                MessageBox.Show("Failed to decrypt EVE Launcher state. If you copied this profile from another Windows account, the encrypted key cannot be unwrapped on this machine.\n\n" + ex.Message);
+                return;
+            }
+            catch (PlatformNotSupportedException)
+            {
+                MessageBox.Show("AES-GCM is not available on this Windows version. Importing from the EVE Launcher requires Windows 10 1809 or newer.");
+                return;
+            }
+            catch (System.IO.IOException ex)
+            {
+                MessageBox.Show("Failed to read EVE Launcher state: " + ex.Message);
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("EVE Launcher state appears to be in an unexpected format: " + ex.Message);
+                return;
+            }
+
+            if (candidates.Count == 0)
+            {
+                MessageBox.Show("No accounts with refresh tokens were found in EVE Launcher state.");
+                return;
+            }
+
+            var dlg = new ImportFromEVELauncherWindow(candidates, App.Settings.Accounts) { Owner = this };
+            dlg.ShowDialog();
+            if (!(dlg.DialogResult.HasValue && dlg.DialogResult.Value))
+                return;
+
+            int added = 0;
+            int updated = 0;
+            foreach (var c in dlg.SelectedCandidates)
+            {
+                var ss = new System.Security.SecureString();
+                foreach (char ch in c.RefreshToken)
+                    ss.AppendChar(ch);
+                ss.MakeReadOnly();
+
+                var existing = App.Settings.Accounts.FirstOrDefault(a => !string.IsNullOrEmpty(a.Username)
+                    && a.Username.Equals(c.Username, StringComparison.InvariantCultureIgnoreCase));
+
+                if (existing != null)
+                {
+                    existing.SecureTranquilityRefreshToken = ss;
+                    existing.EncryptTranquilityRefreshToken();
+                    updated++;
+                }
+                else
+                {
+                    var acct = new EVEAccount { Username = c.Username };
+                    acct.SecureTranquilityRefreshToken = ss;
+                    acct.EncryptTranquilityRefreshToken();
+                    App.Settings.Accounts.Add(acct);
+                    added++;
+                }
+            }
+
+            App.Settings.Store();
+            MessageBox.Show(string.Format("Import complete. {0} added, {1} updated.", added, updated));
+        }
+
         private void checkSavePasswords_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;

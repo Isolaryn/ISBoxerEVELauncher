@@ -19,6 +19,7 @@ namespace ISBoxerEVELauncher.Web
         private const string auth = "/v2/oauth/authorize";
         private const string eula = "/v2/oauth/eula";
         private const string logon = "/account/logon";
+        private const string logonPost = "/account/logon-username";
         private const string launcher = "launcher";
         public const string token = "/v2/oauth/token";
         private const string tqBaseUri = "https://login.eveonline.com";
@@ -48,6 +49,22 @@ namespace ISBoxerEVELauncher.Web
 
             return new Uri(logon, UriKind.Relative)
                 .AddQuery("ReturnUrl",
+                    new Uri(auth, UriKind.Relative)
+                        .AddQuery("client_id", "eveLauncherTQ")
+                        .AddQuery("response_type", "code")
+                        .AddQuery("scope", "eveClientLogin cisservice.customerRead.v1 cisservice.customerWrite.v1")
+                        .AddQuery("redirect_uri", new Uri(new Uri(sisi ? sisiBaseUri : tqBaseUri), launcher)
+                            .AddQuery("client_id", "eveLauncherTQ").ToString())
+                        .AddQuery("state", state)
+                        .AddQuery("code_challenge_method", "S256")
+                        .AddQuery("code_challenge", challengeHash)
+                        .AddQuery("showRemember", "true").ToString());
+        }
+
+        public static Uri GetLoginPostUri(bool sisi, string state, string challengeHash)
+        {
+            return new Uri(logonPost, UriKind.Relative)
+                .AddQuery("returnUrl",
                     new Uri(auth, UriKind.Relative)
                         .AddQuery("client_id", "eveLauncherTQ")
                         .AddQuery("response_type", "code")
