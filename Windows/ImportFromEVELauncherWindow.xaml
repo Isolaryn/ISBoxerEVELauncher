@@ -19,6 +19,11 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="40">
+                        <GridViewColumn.Header>
+                            <CheckBox Name="checkAll"
+                                      Checked="checkAll_Checked" Unchecked="checkAll_Unchecked"
+                                      ToolTip="Select/deselect all" />
+                        </GridViewColumn.Header>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
