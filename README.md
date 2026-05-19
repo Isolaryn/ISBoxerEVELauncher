@@ -1,6 +1,8 @@
 ![Screenshot](http://i.imgur.com/fe1Y7cl.png)
 # Recent changes
 
+* Unreleased Fixes the EVE login flow for current SSO behavior, adds OAuth2 refresh token login, imports refresh tokens from the official EVE Launcher, adds a WebView2 manual login fallback, and shows stored credential state per account.
+
 * Version 1.0.0.42 Merged some important pull requests
 
 
@@ -17,6 +19,11 @@ If password storage is enabled, ISBoxer EVE Launcher keeps your EVE passwords cr
 # Installation
 Un-zip the ISBoxer EVE Launcher.exe file into the location of your choice. If intending to use with Inner Space/ISBoxer, it is recommended to place the file in the Inner Space folder.
 
+The manual login flow uses Microsoft WebView2. When installing from a zip file, keep the included **runtimes** folder next to ISBoxerEVELauncher.exe. If WebView2Loader.dll is missing, manual login will show an error asking for one of these files:
+
+* **runtimes\win-x86\native\WebView2Loader.dll**
+* **runtimes\win-x64\native\WebView2Loader.dll**
+
 An XML settings file will be placed in the same location, *making the launcher Portable*, but also meaning that Administrator permissions will be required if this is placed under the Program Files folder.
 
 # Usage
@@ -32,14 +39,48 @@ When you first run ISBoxer EVE Launcher, it may need to be told where the EVE Sh
 ## Adding EVE Accounts
 To add an EVE Account to ISBoxer EVE Launcher, click Add Account. A window pops up asking for your EVE login details. Enter your EVE username and password. Your EVE Account password is kept secure, and will not be saved in the settings file by default.
 
-## Saving EVE Account passwords
+ISBoxer EVE Launcher can now log in with OAuth2 refresh tokens. When **Use OAuth2 Refresh Tokens** is enabled, a successful login stores an encrypted refresh token and future launches can usually authenticate without re-entering the EVE account password.
+
+The account list shows a credential indicator next to each account:
+
+* Green: password and refresh token are stored
+* Yellow: password is stored
+* Blue: refresh token is stored
+* Blank: no stored credentials
+
+Right-click an account and choose **Set Password...** to update its saved password without re-adding the account. Use **Clear OAuth2 Refresh Tokens** to clear stored refresh tokens for the selected accounts; those accounts will need to authenticate again on the next launch.
+
+## Importing From EVE Launcher
+ISBoxer EVE Launcher can import Tranquility refresh tokens from the official EVE Launcher. This is useful when you already have accounts signed in through the official launcher and want ISBoxer EVE Launcher to launch without prompting for passwords.
+
+Before importing, enable **Save passwords (securely)** and **Use OAuth2 Refresh Tokens**. Imported refresh tokens are encrypted with your Master Password.
+
+Click **Import From EVE Launcher**, then select the accounts to import. Accounts that would overwrite existing ISBoxer EVE Launcher account data are unchecked by default. The header checkbox selects or clears all rows.
+
+Import requires the official EVE Launcher to be installed and signed in to at least one account. It also requires Windows support for AES-GCM; Windows 10 1809 or newer is required.
+
+## Saving EVE Account credentials
 ![Screenshot setting up a Master Password](http://i.imgur.com/7KbH007.png)
 
 EVE Account passwords are NOT stored by default. This means that each time you restart ISBoxer EVE Launcher, you will need to re-enter the password. To avoid having to re-enter your EVE Account passwords, you can enable 'Save passwords (securely)'. As soon as you tick this box, a window will pop up asking you to enter a Master Password; this Master Password will securely protect all of your EVE Account passwords, which will then be stored, securely encrypted in the settings file. The Master Password is never stored, and is discarded after creating the encryption key.
 
 When 'Save passwords (securely)' is enabled, launching ISBoxer EVE Launcher will prompt for your Master Password. If you forget the Master Password, click Cancel to skip entering it -- but note that attempting to log in to any EVE Account will again prompt for the password. If you forget or lose your Master Password, un-tick "Save passwords (securely)" to immediately discard any stored passwords, and disable the Master Password. You will need to create a Master Password again when re-enabling this option.
 
+The Master Password also protects stored OAuth2 refresh tokens. Refresh tokens are sensitive account credentials: treat them like passwords, and clear them with **Clear OAuth2 Refresh Tokens** if you want an account to re-authenticate.
+
 Tip: **The Master Password will need to be re-entered each time you launch ISBoxer EVE Launcher.** However, since version 1.0.0.5, you can leave an ISBoxer EVE Launcher instance running permanently, and any newly launched instances will securely transfer the Master Key from the master ISBoxer EVE Launcher instance. This will allow launches via command-line, desktop shortcuts, Inner Space, etc to automatically log in, instead of asking for your password again!
+
+## Manual login
+If automatic login is not working, enable **Manual login**. ISBoxer EVE Launcher will open an embedded WebView2 browser and ask you to complete the EVE Online login flow there.
+
+When **Manual Autofill** is enabled, ISBoxer EVE Launcher will try to fill and submit the username and password in the WebView2 login form. You may still need to complete any EVE SSO challenge manually.
+
+After a successful manual login, ISBoxer EVE Launcher stores the resulting refresh token when **Save passwords (securely)** and **Use OAuth2 Refresh Tokens** are enabled.
+
+## Debug Mode
+Enable **Debug Mode** only when troubleshooting login problems. Debug output is written to **ISBoxerEVELauncher.log** in the launcher data path.
+
+**Debug logs may contain sensitive authentication data, request details, response bodies, cookies, or tokens. Never share debug logs publicly or with anyone you do not trust.**
 
 ## Launching EVE Accounts without ISBoxer
 To launch one or more EVE Accounts, first highlight them in the list of accounts, and then click either "Launch with Inner Space" or "Launch Non-Inner Space", depending on whether you would like ISBoxer EVE Launcher to use the master Game Profile, or just directly launch EVE Online. Do note that if you're launching ISBoxer EVE Launcher itself through Inner Space, direct launches will still be "through Inner Space". '''ISBoxer EVE Launcher will launch the accounts in the order selected.'''
@@ -91,7 +132,7 @@ Here is a step-by-step description of updating your ISBoxer Character Set to use
 
 4. Add EVE Online Accounts to ISBoxer EVE Launcher using the Add Account button
 
-5. Optional: If you do not want to enter passwords each time, tick "Save passwords (securely)". This will ask for a Master Password which is then used to protect your EVE passwords.
+5. Optional: If you do not want to enter passwords each time, tick "Save passwords (securely)". This will ask for a Master Password which is then used to protect your EVE passwords and OAuth2 refresh tokens. You can also enable "Use OAuth2 Refresh Tokens" and use "Import From EVE Launcher" if your accounts are already signed in through the official EVE Launcher.
 
 6. Close Inner Space if it is running. This will make sure you don't have to do Step 7 twice under any circumstance...
 
@@ -108,6 +149,17 @@ Here is a step-by-step description of updating your ISBoxer Character Set to use
 12. **Launch your ISBoxer Character Set!** For example, right click Inner Space, and find your team under ISBoxer Character Sets. (Do not click "Launch with Inner Space", at all, if you are intending to use ISBoxer!) If your account-specific Game Profiles are created and assigned, your EVE clients should launch without further interaction with ISBoxer EVE Launcher unless a password (etc) is required.
 
 Tip: Most people asking for help so far have missed parts of Step #7, #9, or #12. I've adjusted the text and added emphasis to help you out!
+
+# Troubleshooting login
+If manual login reports that **WebView2Loader.dll** is missing, copy the full **runtimes** folder from the release zip into the same folder as ISBoxerEVELauncher.exe.
+
+If **Import From EVE Launcher** says EVE Launcher state was not found, open the official EVE Launcher and sign in to at least one Tranquility account first.
+
+If import cannot decrypt the EVE Launcher state, the official launcher profile may have been copied from another Windows user or machine. The encrypted key can only be unwrapped by the Windows user that created it.
+
+If a stored refresh token stops working, select the affected account and click **Clear OAuth2 Refresh Tokens**, then authenticate again or re-import from the official EVE Launcher.
+
+Use **Debug Mode** only while collecting troubleshooting data. Debug logs may contain sensitive data and should not be shared publicly.
 
 # Command-line parameters
 ISBoxer EVE Launcher supports the following command-line parameters:
@@ -145,3 +197,6 @@ This EVE Launcher is designed first and foremost to protect your accounts. Your 
 
 Other EVE Launchers may insecurely store your EVE Account data. As of my recent review, IsBridgeUp for example stores passwords encrypted, but they are stored alongside the encryption key and related details -- meaning that to steal your EVE Account passwords from IsBridgeUp, all that an attacker requires is its settings file. **ISBoxer EVE Launcher never stores encryption keys (or your Master Password), and your passwords cannot ever be recovered from ISBoxer EVE Launcher's settings file without your Master Password (keep it secret, keep it safe).**
 
+OAuth2 refresh tokens are also encrypted with your Master Password. Refresh tokens can be used to obtain access tokens for launching EVE, so protect them like passwords. Imported tokens from the official EVE Launcher are saved only after encryption.
+
+Manual login uses WebView2 data isolated per EVE account under your local application data. Debug Mode can write sensitive login details to disk, so leave it disabled unless you are actively troubleshooting.

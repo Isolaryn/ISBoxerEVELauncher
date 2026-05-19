@@ -1,4 +1,6 @@
 ﻿
+* Unreleased Fix login flow for current EVE SSO behavior. Added OAuth2 refresh token support, refresh-token import from the official EVE Launcher, a WebView2 manual login fallback, per-account credential state indicators, right-click Set Password, Clear OAuth2 Refresh Tokens, and debug logging for login troubleshooting. WebView2 loader checks now report a clear packaging error, and WebView2 data is isolated per account.
+
 * Version 1.0.0.41 Merge back to Master from multi branch tree
 
 * Version 1.0.0.40 Added DX12 support, added refreshToken to the authentication process, removed x64 option (this is now the default)
