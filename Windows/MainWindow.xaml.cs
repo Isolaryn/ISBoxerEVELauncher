@@ -627,7 +627,7 @@ namespace ISBoxerEVELauncher.Windows
 
             if (!App.Settings.UseRefreshTokens || !App.Settings.UseMasterKey)
             {
-                MessageBox.Show("To import refresh tokens, enable 'Save passwords (securely)' and 'Use OAuth2 Refresh Tokens' first. Imported tokens are encrypted with your Master Password.");
+                MessageBox.Show("To import refresh tokens, enable 'Save credentials (securely)' and 'Use OAuth2 Refresh Tokens' first. Imported tokens are encrypted with your Master Password.");
                 return;
             }
 
@@ -721,7 +721,7 @@ namespace ISBoxerEVELauncher.Windows
                 // clear master key
                 if (App.Settings.UseMasterKey)
                 {
-                    switch (MessageBox.Show("By un-checking this box, this launcher will immediately clear out all *saved* passwords. Do you wish to continue?", "Wait! You are about to lose any saved passwords!", MessageBoxButton.YesNo))
+                    switch (MessageBox.Show("By un-checking this box, this launcher will immediately clear out saved credentials protected by your Master Password. Do you wish to continue?", "Wait! You are about to lose saved credentials!", MessageBoxButton.YesNo))
                     {
                         case MessageBoxResult.Yes:
                             App.Settings.ClearPasswordMasterKey();

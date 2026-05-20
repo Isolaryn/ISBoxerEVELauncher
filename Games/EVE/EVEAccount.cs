@@ -339,7 +339,7 @@ namespace ISBoxerEVELauncher.Games.EVE
 
             if (!App.Settings.RequestMasterPassword())
             {
-                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save EVE Account passwords. It can be reset or disabled by un-checking 'Save passwords (securely)', and then all currently saved EVE Account passwords will be lost.");
+                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save EVE Account passwords. It can be reset or disabled by un-checking 'Save credentials (securely)', and then all currently saved EVE Account passwords will be lost.");
                 return;
             }
 
@@ -553,7 +553,7 @@ namespace ISBoxerEVELauncher.Games.EVE
 
             if (!App.Settings.RequestMasterPassword())
             {
-                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save EVE Account Character Names and passwords. It can be reset or disabled by un-checking 'Save passwords (securely)', and then all currently saved EVE Account Character Names will be lost.");
+                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save EVE Account Character Names and passwords. It can be reset or disabled by un-checking 'Save credentials (securely)', and then all currently saved EVE Account Character Names will be lost.");
                 return;
             }
 
@@ -863,7 +863,7 @@ namespace ISBoxerEVELauncher.Games.EVE
 
             if (!App.Settings.RequestMasterPassword())
             {
-                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save refresh tokens. It can be reset or disabled by un-checking 'Save passwords (securely)', and then all currently saved refresh tokens will be lost.");
+                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save refresh tokens. It can be reset or disabled by un-checking 'Save credentials (securely)', and then all currently saved refresh tokens will be lost.");
                 return;
             }
 
@@ -982,7 +982,7 @@ namespace ISBoxerEVELauncher.Games.EVE
 
             if (!App.Settings.RequestMasterPassword())
             {
-                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save refresh tokens. It can be reset or disabled by un-checking 'Save passwords (securely)', and then all currently saved refresh tokens will be lost.");
+                System.Windows.MessageBox.Show("Your configured Master Password is required in order to save refresh tokens. It can be reset or disabled by un-checking 'Save credentials (securely)', and then all currently saved refresh tokens will be lost.");
                 return;
             }
 

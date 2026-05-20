@@ -27,7 +27,7 @@ namespace ISBoxerEVELauncher.Windows
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Master Password entry cancelled. If you wish to reset the Master Password and clear saved EVE Account passwords, un-check 'Save passwords (secure)'");
+            MessageBox.Show("Master Password entry cancelled. If you wish to reset the Master Password and clear saved EVE Account credentials, un-check 'Save credentials (secure)'");
             e.Handled = true;
             DialogResult = false;
             this.Close();

@@ -60,7 +60,7 @@
 
                         <ScrollViewer Margin="5,0,0,0" Width="187" VerticalScrollBarVisibility="Auto">
                             <StackPanel>
-                                <CheckBox Name="checkSavePasswords" Content="Save passwords (securely)" Margin="0,3,0,0" Click="checkSavePasswords_Click" />
+                                <CheckBox Name="checkSavePasswords" Content="Save credentials (securely)" Margin="0,3,0,0" Click="checkSavePasswords_Click" />
                                 <CheckBox Name="checkUseRefreshTokens" Content="Use OAuth2 Refresh Tokens" Margin="0,3,0,0" IsChecked="{Binding ElementName=mainWindow, Path=UseRefreshTokens}">
                                     <CheckBox.ToolTip>
                                         <TextBlock TextWrapping="Wrap" Width="200">Use OAuth2 Refresh Tokens to log in, instead of username and passwords.</TextBlock>
@@ -178,7 +178,7 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                         <DockPanel  Margin="5,0,0,0" Width="187" Height="240">
-                            <CheckBox DockPanel.Dock="Top" x:Name="checkSaveCharacterPasswords" Content="Save passwords (securely)" Margin="0,3,0,0" Click="checkSavePasswords_Click" IsChecked="{Binding IsChecked, ElementName=checkUseRefreshTokens}" />
+                            <CheckBox DockPanel.Dock="Top" x:Name="checkSaveCharacterPasswords" Content="Save credentials (securely)" Margin="0,3,0,0" Click="checkSavePasswords_Click" IsChecked="{Binding IsChecked, ElementName=checkUseRefreshTokens}" />
                             <Button DockPanel.Dock="Top" x:Name="buttonAddCharacter" Content="Add Character" Click="buttonAddCharacter_Click" Margin="0,3,0,0" />
                             <Button DockPanel.Dock="Top" x:Name="buttonDeleteCharacter" Content="Delete Character(s)" Click="buttonDeleteCharacter_Click" Margin="0,3,0,0" VerticalAlignment="Top" >
                                 <Button.Style>

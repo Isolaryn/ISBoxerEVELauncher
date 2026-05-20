@@ -53,7 +53,7 @@ Right-click an account and choose **Set Password...** to update its saved passwo
 ## Importing From EVE Launcher
 ISBoxer EVE Launcher can import Tranquility refresh tokens from the official EVE Launcher. This is useful when you already have accounts signed in through the official launcher and want ISBoxer EVE Launcher to launch without prompting for passwords.
 
-Before importing, enable **Save passwords (securely)** and **Use OAuth2 Refresh Tokens**. Imported refresh tokens are encrypted with your Master Password.
+Before importing, enable **Save credentials (securely)** and **Use OAuth2 Refresh Tokens**. Imported refresh tokens are encrypted with your Master Password.
 
 Click **Import From EVE Launcher**, then select the accounts to import. Accounts that would overwrite existing ISBoxer EVE Launcher account data are unchecked by default. The header checkbox selects or clears all rows.
 
@@ -62,9 +62,9 @@ Import requires the official EVE Launcher to be installed and signed in to at le
 ## Saving EVE Account credentials
 ![Screenshot setting up a Master Password](http://i.imgur.com/7KbH007.png)
 
-EVE Account passwords are NOT stored by default. This means that each time you restart ISBoxer EVE Launcher, you will need to re-enter the password. To avoid having to re-enter your EVE Account passwords, you can enable 'Save passwords (securely)'. As soon as you tick this box, a window will pop up asking you to enter a Master Password; this Master Password will securely protect all of your EVE Account passwords, which will then be stored, securely encrypted in the settings file. The Master Password is never stored, and is discarded after creating the encryption key.
+EVE Account passwords are NOT stored by default. This means that each time you restart ISBoxer EVE Launcher, you will need to re-enter the password. To avoid having to re-enter your EVE Account passwords, you can enable 'Save credentials (securely)'. As soon as you tick this box, a window will pop up asking you to enter a Master Password; this Master Password will securely protect all of your EVE Account credentials, which will then be stored, securely encrypted in the settings file. The Master Password is never stored, and is discarded after creating the encryption key.
 
-When 'Save passwords (securely)' is enabled, launching ISBoxer EVE Launcher will prompt for your Master Password. If you forget the Master Password, click Cancel to skip entering it -- but note that attempting to log in to any EVE Account will again prompt for the password. If you forget or lose your Master Password, un-tick "Save passwords (securely)" to immediately discard any stored passwords, and disable the Master Password. You will need to create a Master Password again when re-enabling this option.
+When 'Save credentials (securely)' is enabled, launching ISBoxer EVE Launcher will prompt for your Master Password. If you forget the Master Password, click Cancel to skip entering it -- but note that attempting to log in to any EVE Account will again prompt for the password. If you forget or lose your Master Password, un-tick "Save credentials (securely)" to immediately discard stored credentials protected by your Master Password, and disable the Master Password. You will need to create a Master Password again when re-enabling this option.
 
 The Master Password also protects stored OAuth2 refresh tokens. Refresh tokens are sensitive account credentials: treat them like passwords, and clear them with **Clear OAuth2 Refresh Tokens** if you want an account to re-authenticate.
 
@@ -75,7 +75,7 @@ If automatic login is not working, enable **Manual login**. ISBoxer EVE Launcher
 
 When **Manual Autofill** is enabled, ISBoxer EVE Launcher will try to fill and submit the username and password in the WebView2 login form. You may still need to complete any EVE SSO challenge manually.
 
-After a successful manual login, ISBoxer EVE Launcher stores the resulting refresh token when **Save passwords (securely)** and **Use OAuth2 Refresh Tokens** are enabled.
+After a successful manual login, ISBoxer EVE Launcher stores the resulting refresh token when **Save credentials (securely)** and **Use OAuth2 Refresh Tokens** are enabled.
 
 ## Debug Mode
 Enable **Debug Mode** only when troubleshooting login problems. Debug output is written to **ISBoxerEVELauncher.log** in the launcher data path.
@@ -132,7 +132,7 @@ Here is a step-by-step description of updating your ISBoxer Character Set to use
 
 4. Add EVE Online Accounts to ISBoxer EVE Launcher using the Add Account button
 
-5. Optional: If you do not want to enter passwords each time, tick "Save passwords (securely)". This will ask for a Master Password which is then used to protect your EVE passwords and OAuth2 refresh tokens. You can also enable "Use OAuth2 Refresh Tokens" and use "Import From EVE Launcher" if your accounts are already signed in through the official EVE Launcher.
+5. Optional: If you do not want to enter passwords each time, tick "Save credentials (securely)". This will ask for a Master Password which is then used to protect your EVE passwords and OAuth2 refresh tokens. You can also enable "Use OAuth2 Refresh Tokens" and use "Import From EVE Launcher" if your accounts are already signed in through the official EVE Launcher.
 
 6. Close Inner Space if it is running. This will make sure you don't have to do Step 7 twice under any circumstance...
 
@@ -144,7 +144,7 @@ Here is a step-by-step description of updating your ISBoxer Character Set to use
 
 10. Export to Inner Space
 
-11. Optional: If you have enabled "Save passwords (securely)" in Step 5, run an instance of ISBoxer EVE Launcher as Administrator now. This will act as a "master" ISBoxer EVE Launcher instance, which will allow the new instances to not ask you for the Master Password each time!
+11. Optional: If you have enabled "Save credentials (securely)" in Step 5, run an instance of ISBoxer EVE Launcher as Administrator now. This will act as a "master" ISBoxer EVE Launcher instance, which will allow the new instances to not ask you for the Master Password each time!
 
 12. **Launch your ISBoxer Character Set!** For example, right click Inner Space, and find your team under ISBoxer Character Sets. (Do not click "Launch with Inner Space", at all, if you are intending to use ISBoxer!) If your account-specific Game Profiles are created and assigned, your EVE clients should launch without further interaction with ISBoxer EVE Launcher unless a password (etc) is required.
 
